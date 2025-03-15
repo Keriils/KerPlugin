@@ -2,12 +2,12 @@ plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
     `maven-publish`
-    id("com.keriils.spotless-wrapper") version "0.2-SNAPSHOT"
+    id("com.keriils.spotless-wrapper") version "0.1.0"
 }
 
 group = "com.keriils"
 
-version = "0.2-SNAPSHOT"
+version = "0.1.0"
 
 repositories {
     mavenLocal()
@@ -39,22 +39,12 @@ gradlePlugin {
 publishing {
     publications {
         create<MavenPublication>("KerPlugin") {
-            artifactId = "KerPlugin"
+            artifactId = rootProject.name
+            groupId = project.group as String
+            version = project.version as String
             from(components["java"])
         }
     }
 
-    repositories {
-        mavenLocal()
-
-        //        maven {
-        //            name = "GithubPackages"
-        //            url = uri("https://maven.pkg.github.com/OWNER/REPOSITORY")
-        //            credentials {
-        //                username = project.findProperty("GitUserName") as String? ?: System.getenv("USERNAME")
-        //                password = project.findProperty("GitHub.All") as String? ?: System.getenv("TOKEN")
-        //            }
-        //        }
-
-    }
+    repositories { mavenLocal() }
 }
