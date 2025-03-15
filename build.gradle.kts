@@ -2,7 +2,7 @@ plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
     `maven-publish`
-    id("com.keriils.spotless-wrapper") version "0.1.0"
+//    id("com.keriils.spotless-wrapper") version "0.1.0"
 }
 
 group = "com.keriils"
