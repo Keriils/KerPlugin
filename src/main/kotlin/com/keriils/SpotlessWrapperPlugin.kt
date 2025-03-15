@@ -3,39 +3,63 @@ package com.keriils
 import com.diffplug.gradle.spotless.BaseKotlinExtension
 import com.diffplug.gradle.spotless.FormatExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+open class SpotlessWrapperExtension {
+
+    var spotlessConfigJava = true
+    var spotlessConfigKotlin = true
+    var spotlessConfigGroovyGradle = true
+    var spotlessConfigKotlinGradle = true
+}
+
 @Suppress("unused")
-class SpotlessWrapperPlugin : Plugin<Project> {
+open class SpotlessWrapperPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.applySpotlessConfig()
+        project.applySpotlessConfig(project.extensions.create("wrapperSpotless", SpotlessWrapperExtension::class.java))
     }
 }
 
-val applySpotlessConfig =
-    fun Project.() {
+fun Project.applySpotlessConfig(wrapperSpotless: SpotlessWrapperExtension) {
 
-        fun FormatExtension.applyCommonFormatSteps() {
-            toggleOffOn()
-            trimTrailingWhitespace()
-            endWithNewline()
+    fun FormatExtension.applyCommonFormatSteps() {
+        toggleOffOn()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    @Suppress("SpellCheckingInspection")
+    fun BaseKotlinExtension.applyCustomKtfmtConfig() {
+        ktfmt("0.54").googleStyle().configure {
+            it.setMaxWidth(120)
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+            it.setRemoveUnusedImports(true)
+            it.setManageTrailingCommas(true)
         }
+    }
 
-        @Suppress("SpellCheckingInspection")
-        fun BaseKotlinExtension.applyCustomKtfmtConfig() {
-            ktfmt("0.54").googleStyle().configure {
-                it.setMaxWidth(120)
-                it.setBlockIndent(4)
-                it.setContinuationIndent(4)
-                it.setRemoveUnusedImports(true)
-                it.setManageTrailingCommas(true)
-            }
-        }
+    fun extractDefaultConfigFileFromPluginJar(pluginClass: Class<*>): File {
+        val defaultConfigResource =
+            pluginClass.getResourceAsStream("/spotless/eclipseformat.xml")
+                ?: throw RuntimeException("Default Spotless configuration file not found in resources.")
 
-        plugins.apply("com.diffplug.spotless")
+        val tempFile = File.createTempFile("spotlessWrapper.plugin", ".xml")
+        tempFile.deleteOnExit()
 
+        defaultConfigResource.use { input -> Files.copy(input, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING) }
+
+        return tempFile
+    }
+
+    plugins.apply("com.diffplug.spotless")
+
+    project.afterEvaluate {
         project.extensions.configure<SpotlessExtension>("spotless") {
             encoding("UTF-8")
 
@@ -45,35 +69,44 @@ val applySpotlessConfig =
                 applyCommonFormatSteps()
             }
 
-            java {
-                target("src/*/java/**/*.java", "src/*/scala/**/*.java")
+            if (wrapperSpotless.spotlessConfigJava) {
+                java {
+                    target("src/*/java/**/*.java", "src/*/scala/**/*.java")
 
-                formatAnnotations()
-                removeUnusedImports()
-                applyCommonFormatSteps()
-                importOrder("java", "javax", "net", "org", "com")
-                eclipse("4.19").configFile(file("SpotlessPlugin/spotless.eclipseFormat.xml"))
+                    formatAnnotations()
+                    removeUnusedImports()
+                    applyCommonFormatSteps()
+                    importOrder("java", "javax", "net", "org", "com")
+                    eclipse("4.19").configFile(extractDefaultConfigFileFromPluginJar(this.javaClass))
+                }
             }
 
-            kotlin {
-                target("src/*/kotlin/**/*.kt")
-                leadingSpacesToTabs()
-                applyCustomKtfmtConfig()
-                applyCommonFormatSteps()
+            if (wrapperSpotless.spotlessConfigKotlin) {
+                kotlin {
+                    target("src/*/kotlin/**/*.kt")
+                    leadingSpacesToTabs()
+                    applyCustomKtfmtConfig()
+                    applyCommonFormatSteps()
+                }
             }
 
-            kotlinGradle {
-                target("*.gradle.kts")
-                applyCustomKtfmtConfig()
-                applyCommonFormatSteps()
+            if (wrapperSpotless.spotlessConfigKotlinGradle) {
+                kotlinGradle {
+                    target("*.gradle.kts")
+                    applyCustomKtfmtConfig()
+                    applyCommonFormatSteps()
+                }
             }
 
-            groovyGradle {
-                target("*.gradle")
+            if (wrapperSpotless.spotlessConfigGroovyGradle) {
+                groovyGradle {
+                    target("*.gradle")
 
-                removeSemicolons()
-                applyCommonFormatSteps()
-                importOrder("java", "javax", "net", "org", "com")
+                    removeSemicolons()
+                    applyCommonFormatSteps()
+                    importOrder("java", "javax", "net", "org", "com")
+                }
             }
         }
     }
+}
