@@ -1,14 +1,17 @@
+import com.vanniktech.maven.publish.GradlePlugin
+import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     `kotlin-dsl`
     signing
     id("com.vanniktech.maven.publish") version "0.31.0"
+    id("online.keriils.plugins.spotless-wrapper") version "0.1.1"
 }
 
 group = "online.keriils.plugins"
 
-version = "0.1.0"
+version = "0.1.1"
 
 kotlin { jvmToolchain(21) }
 
@@ -20,9 +23,7 @@ repositories {
 
 dependencies { implementation("com.diffplug.spotless:spotless-plugin-gradle:7.0.2") }
 
-java {
-    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
-}
+java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
 
 gradlePlugin {
     plugins {
@@ -36,6 +37,7 @@ gradlePlugin {
 }
 
 mavenPublishing {
+    configure(GradlePlugin(javadocJar = JavadocJar.Javadoc(), sourcesJar = true))
     coordinates(group as String, rootProject.name, version as String)
 
     pom {
@@ -68,4 +70,3 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 }
-

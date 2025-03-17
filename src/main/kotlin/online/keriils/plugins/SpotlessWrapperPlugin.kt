@@ -1,4 +1,4 @@
-package com.keriils
+package online.keriils.plugins
 
 import com.diffplug.gradle.spotless.BaseKotlinExtension
 import com.diffplug.gradle.spotless.FormatExtension
