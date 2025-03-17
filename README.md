@@ -11,7 +11,7 @@
 Wraps commonly used Spotless plugin settings to your projects.
 
 **Usage**:
-To include and apply the `SpotlessWrapper` in your project, add the following to your `build.gradle` file:
+To include and apply the `SpotlessWrapper` in your project, add the following to your `build.gradle[.kts]` file:
 
 ```kotlin
 plugins {
