@@ -10,7 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 open class SpotlessWrapperExtension {
-
+    var enforceSpotlessCheck = false
     var spotlessConfigJava = true
     var spotlessConfigKotlin = true
     var spotlessConfigGroovyGradle = true
@@ -62,6 +62,8 @@ fun Project.applySpotlessConfig(wrapperSpotless: SpotlessWrapperExtension) {
     project.afterEvaluate {
         project.extensions.configure<SpotlessExtension>("spotless") {
             encoding("UTF-8")
+
+            if (!wrapperSpotless.enforceSpotlessCheck) isEnforceCheck = false
 
             format("misc") {
                 target(".gitignore")
