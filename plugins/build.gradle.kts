@@ -8,15 +8,15 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.31.0"
 }
 
-version = "0.1.2"
-
-val archiveName = "KerGradlePlugin"
+version = "0.1.3"
 
 group = "online.keriils.plugins"
 
+val archiveName = "KerGradlePlugin"
+
 tasks.jar { archiveBaseName.set(archiveName) }
 
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
+java { toolchain { languageVersion.set(JavaLanguageVersion.of(17)) } }
 
 dependencies { implementation("com.diffplug.spotless:spotless-plugin-gradle:7.0.2") }
 

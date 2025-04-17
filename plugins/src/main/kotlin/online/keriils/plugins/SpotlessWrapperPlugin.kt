@@ -63,7 +63,7 @@ fun Project.applySpotlessConfig(wrapperSpotless: SpotlessWrapperExtension) {
         project.extensions.configure<SpotlessExtension>("spotless") {
             encoding("UTF-8")
 
-            if (!wrapperSpotless.enforceSpotlessCheck) isEnforceCheck = false
+            isEnforceCheck = wrapperSpotless.enforceSpotlessCheck
 
             format("misc") {
                 target(".gitignore")
