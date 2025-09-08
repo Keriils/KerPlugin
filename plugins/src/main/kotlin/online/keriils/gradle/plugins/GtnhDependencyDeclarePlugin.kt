@@ -57,8 +57,6 @@ public abstract class GtnhDependencyDeclarePlugin : Plugin<Project> {
                     )
                     handlers.finalizeValue()
                 }
-
-                val configurations = project.configurations.getByName("")
             }
     }
 

@@ -38,5 +38,4 @@ public interface DependencyDeclarationHandler : ConfigurationWrapper {
         classifier: String,
         block: DependencyConstraint.() -> Unit,
     ): DependencyConstraint
-
 }

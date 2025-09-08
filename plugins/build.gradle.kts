@@ -103,7 +103,10 @@ dependencies {
     compileOnly(kotlin("gradle-plugin"))
     api(pluginDep("com.diffplug.gradle.spotless", spotlessVersion))
     api(pluginDep("org.jetbrains.gradle.plugin.idea-ext", ideaExtVersion))
-    shadowImpl(pluginDep("com.github.ElytraServers.elytra-conventions", elytraConventionVersion)) { isTransitive = false }
+    //    shadowImpl(pluginDep("com.github.ElytraServers.elytra-conventions", elytraConventionVersion)) {
+    //        isTransitive = false
+    //    }
+    shadowImpl("com.github.ElytraServers.elytra-conventions:plugin:$elytraConventionVersion") { isTransitive = false }
 }
 
 // refer from gtnhGradle
