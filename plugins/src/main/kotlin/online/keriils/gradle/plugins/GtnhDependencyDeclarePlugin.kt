@@ -55,8 +55,8 @@ public abstract class GtnhDependencyDeclarePlugin : Plugin<Project> {
                             this,
                         )
                     )
-                    handlers.finalizeValue()
                 }
+                handlers.finalizeValue()
             }
     }
 
