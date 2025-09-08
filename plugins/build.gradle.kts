@@ -168,7 +168,7 @@ tasks.jar {
 }
 
 mavenPublishing {
-    configure(GradlePlugin(javadocJar = JavadocJar.None(), sourcesJar = true))
+    configure(GradlePlugin(javadocJar = JavadocJar.Javadoc(), sourcesJar = true))
     coordinates(group as String, pluginArchiveName, version as String)
 
     pom {
